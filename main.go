@@ -6,6 +6,7 @@ import (
 	"html"
 	"net/http"
 	"os"
+	"sort"
 	"strings"
 )
 
@@ -76,7 +77,7 @@ func GetLinks(links []string, n *html.Node) []string{
 		// loo for href attribute
 		for _, attr := range n.attr{
 			if attr.Key == "href" {
-                // Add link if it's not already in the slice
+                // Add link if it's not already in the slice -> to avoid dupliacte
                 if !sliceContains(links, attr.Val) {
                     links = append(links, attr.Val)
                 }
@@ -89,6 +90,35 @@ func GetLinks(links []string, n *html.Node) []string{
 		links = pageLinks(links, c)
 	}
 	return links
+}
+
+// _ means it discards the index
+func sliceContains(sortedSlice []string, value string) bool {
+	sort.Strings(sortedSlice)
+
+	index := sort.SearchStrings(sortedSlice, value)
+	return index < len(sortedSlice) && sortedSlice[index] == value
+}
+
+// check the duplicates finds and prints pages with the duplicate titles
+func checkDuped(visited *map[string]string){
+	found := false
+    uniqueTitles := make(map[string]string)
+    
+    fmt.Println("\nChecking for Duplicate Titles:")
+    for link, title := range *visited {
+        if firstAppearance, exists := uniqueTitles[title]; exists {
+            found = true
+            fmt.Printf("Duplicate: \"%s\" found in %s (first in %s)\n", 
+                      title, link, firstAppearance)
+        } else {
+            uniqueTitles[title] = link
+        }
+    }
+    
+    if !found {
+        fmt.Println("No duplicate titles found!")
+    }
 }
 
 // this is the main function
