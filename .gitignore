@@ -1,0 +1,18 @@
+# Ignore compiled Go binaries
+*.exe
+*.out
+*.o
+*.a
+*.so
+
+# Ignore dependencies if using Go modules
+vendor/
+
+# Ignore IDE and editor-specific files
+.vscode/
+.idea/
+*.swp
+
+# Ignore Go cache and test binaries
+*.test
+*.cover
